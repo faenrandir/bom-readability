@@ -8,12 +8,12 @@ from collections import defaultdict
 import textstat
 
 LETTER_TO_COWDERY_OCT_1829 = """
-I would inform you that I arrived at home on Sunday morning the 4th. After having a prosperous journey, and found all well, the people are all friendly to us except a few who are in opposition to everything, unless it is something that is axactly like themselves, and two of our most formidable persecutors are now under censure and are cited to a trial in the Church for crimes which, if true, are worse than all the Gold Book business.  We do not rejoice in the affliction of our enemies but we shall be glad to have truth prevail.
+I would inform you that I arrived at home on Sunday morning the fourth. After having a prosperous journey, and found all well, the people are all friendly to us except a few who are in opposition to everything, unless it is something that is axactly like themselves, and two of our most formidable persecutors are now under censure and are cited to a trial in the Church for crimes which, if true, are worse than all the Gold Book business.  We do not rejoice in the affliction of our enemies but we shall be glad to have truth prevail.
 There begins to be a great call for our books in this country; the minds of the people are very much excited when they find that there is a copyright obtained and that there really are books about to be printed.
 I have bought a horse from Mister Stowell and want someone to come after it as soon as is convenient.
 Mister Stowell has a prospect of getting five or six hundred dollars, but he does not know for certain that he can get it, but he is a going to try, and if he can get the money he wants to pay it in immediately for books.
 We want to hear from you and know how you prosper in the good work.
-Give our best respects to Father and Mother and all our brothers and Sisters. To Mister Harris and all the company concerned tell them that our prayers are put up daily for them that they may be prospered in every good word and work and that they may be preserved from sin here and from the consequence of sin hereafter.
+Give our best respects to Father and Mother and all our brothers and sisters. To Mister Harris and all the company concerned tell them that our prayers are put up daily for them that they may be prospered in every good word and work and that they may be preserved from sin here and from the consequence of sin hereafter.
 And now dear brother, be faithful in the discharge of every duty looking for the reward of the righteous.
 And now, may God of his infinite mercy keep and preserve us spotless until his coming and receive us all to rest with him in eternal repose through the attonement of Christ our Lord, Amen.
 """.lstrip()
@@ -27,7 +27,8 @@ bom_json = json.loads(open(args.bom_json_filename).read())
 
 
 # I think difficult_words is a summation of difficult words and so is
-# length dependent?  Dropping difficult_words.
+# length dependent?  Dropping difficult_words.  If shown to be length
+# independent will add back in.
 METRICS = [
     "flesch_reading_ease",
     "smog_index",
@@ -345,23 +346,40 @@ book_of_mormon_less_bible_readability = measure_readability(all_book_of_mormon_t
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn
 
-# plt.subplots(3, 3, figsize=(8, 6), sharex=False, sharey=False)
+seaborn.set()
 
-for metric, values in readability_metrics.items():
+figure, axes = plt.subplots(3, 3)
+
+# axes.ylabel('score')
+# figure.ylabel('score')
+# figure.legend()
+
+for plot_num, (metric, values) in enumerate(readability_metrics.items()):
+    axes_coordinates = divmod(plot_num, 3)
+    this_plot = axes[axes_coordinates[0], axes_coordinates[1]]
 
     chapter_seq = np.arange(len(values))
 
-    plt.scatter(chapter_seq, values, alpha=0.9, label='Book of Mormon Chapters')
-    plt.axhline(y=letter_to_cowdery_readability[metric], color='red', alpha=0.5, linestyle=":", linewidth=2, label='Oct 1829 Letter to Cowdery')
-    plt.axhline(y=book_of_mormon_less_bible_readability[metric], color='black', alpha=0.5, linestyle="--", linewidth=3, label='Complete Book of Mormon')
-    # plt.xticks(y_pos, objects)
-    plt.ylabel('score')
-    plt.legend()
-    plt.title(metric)
+    this_plot.scatter(chapter_seq, values, alpha=0.9, label='Book of Mormon Chapters')
+    this_plot.axhline(y=letter_to_cowdery_readability[metric], color='red', alpha=0.5, linestyle=":", linewidth=2, label='Oct 1829 Letter to Cowdery')
+    this_plot.axhline(y=book_of_mormon_less_bible_readability[metric], color='black', alpha=0.5, linestyle="--", linewidth=3, label='Complete Book of Mormon')
+    this_plot.set_title(metric)
 
-    plt.show()
+
+figure.text(0.5, 0.04, 'chapter', ha='center', va='center')
+figure.text(0.06, 0.5, 'score', ha='center', va='center', rotation='vertical')
+figure.suptitle('Book of Mormon readability')
+
     # print(readability_metrics)
+
+# all_labels = [axes.get_legend_handles_labels() for axes in figure.axes]
+# features, labels = [sum(lol, []) for lol in zip(*all_labels)]
+# figure.legend(features, labels)
+
+
+plt.show()
 
 print(book_of_mormon_less_bible_readability)
 # len(LETTER_TO_COWDERY_OCT_1829)
