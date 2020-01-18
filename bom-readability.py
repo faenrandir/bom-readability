@@ -7,6 +7,9 @@ from collections import defaultdict
 
 import textstat
 
+# note that some of the readability scores seem to be sensitive to spacing left between paragraphs.  The most "sane" results (and ones that most closely match the values when I paste them into an online metric) are when we have a single newline between paragraphs.  So, that is how I've formatted the text below.
+# Each paragraph ends in a newline, and I followed the exact same pattern in stitching together Book of Mormon verses.
+
 LETTER_TO_COWDERY_OCT_1829 = """
 I would inform you that I arrived at home on Sunday morning the fourth. After having a prosperous journey, and found all well, the people are all friendly to us except a few who are in opposition to everything, unless it is something that is axactly like themselves, and two of our most formidable persecutors are now under censure and are cited to a trial in the Church for crimes which, if true, are worse than all the Gold Book business.  We do not rejoice in the affliction of our enemies but we shall be glad to have truth prevail.
 There begins to be a great call for our books in this country; the minds of the people are very much excited when they find that there is a copyright obtained and that there really are books about to be printed.
@@ -379,11 +382,16 @@ figure.suptitle('Book of Mormon readability')
 # figure.legend(features, labels)
 
 
-plt.show()
-
-print(book_of_mormon_less_bible_readability)
-# len(LETTER_TO_COWDERY_OCT_1829)
-
-# print("BOOK", measure_readability(whole_book))
+# plt.show()
 
 
+print(" | ".join(['metric', 'BoM', '1829 Letter']))
+print("---: | :--- | :---")
+
+for metric in letter_to_cowdery_readability.keys():
+    vals = [
+        metric,
+        "{:.1f}".format(book_of_mormon_less_bible_readability[metric]),
+        "{:.1f}".format(letter_to_cowdery_readability[metric]),
+    ]
+    print(" | ".join(vals))
