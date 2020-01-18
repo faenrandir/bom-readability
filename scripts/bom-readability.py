@@ -95,28 +95,30 @@ from matplotlib import pyplot
 
 seaborn.set()
 
-figure, axes = pyplot.subplots(3, 3)
+figure, axes = pyplot.subplots(3, 3, sharex=False, sharey=False)
 
 for plot_num, (metric, values) in enumerate(readability_metrics.items()):
     axes_coordinates = divmod(plot_num, 3)
     this_plot = axes[axes_coordinates[0], axes_coordinates[1]]
-    this_plot.set_xlim([-5, len(values) + 5])
+    # this_plot.set_xlim([-5, len(values) + 5])
 
     #this_plot.xlim(left=0)
     #this_plot.xlim(right=len(values))
 
     chapter_seq = numpy.arange(len(values))
 
-    scatter = this_plot.scatter(chapter_seq, values, alpha=0.9, label='Book of Mormon Chapters')
-    letter_line = this_plot.axhline(y=letter_to_cowdery_readability[metric], color='red', alpha=0.5, linestyle=":", linewidth=2, label='Oct 1829 Letter to Cowdery')
-    bom_line = this_plot.axhline(y=book_of_mormon_less_bible_readability[metric], color='black', alpha=0.5, linestyle="--", linewidth=3, label='Complete Book of Mormon')
-    if axes_coordinates == (0, 2):
-        this_plot.legend(
-            [scatter, letter_line, bom_line],
-            ['Book of Mormon (chapters)', '1829 Letter to Cowdery', 'Book of Mormon'],
-            prop={'size': 20},
-            bbox_to_anchor=(1.03, 1.45),
-        )
+    # scatter = this_plot.scatter(chapter_seq, values, alpha=0.9, label='Book of Mormon Chapters')
+    # letter_line = this_plot.axhline(y=letter_to_cowdery_readability[metric], color='red', alpha=0.5, linestyle=":", linewidth=2, label='Oct 1829 Letter to Cowdery')
+    # bom_line = this_plot.axhline(y=book_of_mormon_less_bible_readability[metric], color='black', alpha=0.5, linestyle="--", linewidth=3, label='Complete Book of Mormon')
+    this_plot.hist(values, bins=40)
+    this_plot.hist(values, density=True)
+    # if axes_coordinates == (0, 2):
+        # this_plot.legend(
+        #     [scatter, letter_line, bom_line],
+        #     ['Book of Mormon (chapters)', '1829 Letter to Cowdery', 'Book of Mormon'],
+        #     prop={'size': 20},
+        #     bbox_to_anchor=(1.03, 1.45),
+        # )
 
     this_plot.set_title(metric.replace("_", " "), fontsize=24)
 
