@@ -109,7 +109,7 @@ for chapter, data in chapter_data.items():
         for metric, score in data['readability'].items():
             readability_metrics[metric].append(score)
 
-        write_to_file(f"{chapter}.txt", data['text'])
+        # write_to_file(f"{chapter}.txt", data['text'])
     else:
         print(f"CHAPTER {len(data['text'])} < {MIN_CHAR_LENGTH}; dropping", chapter)
 
@@ -117,7 +117,7 @@ letter_to_cowdery_readability = measure_readability(letter_to_cowdery_oct_1829)
 preface_to_bom_readability = measure_readability(preface_to_bom)
 book_of_mormon_less_bible_readability = measure_readability(all_book_of_mormon_text_without_bible)
 
-write_to_file("1992-bom-all-less-bible.txt", all_book_of_mormon_text_without_bible)
+# write_to_file("1992-bom-all-less-bible.txt", all_book_of_mormon_text_without_bible)
 
 # pyplot.rcdefaults()
 
