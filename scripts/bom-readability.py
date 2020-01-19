@@ -43,6 +43,11 @@ BOXSTYLE = dict(
     left='rarrow',
 )
 
+def write_to_file(filename, text):
+    with open(filename, 'w') as out:
+        out.write(text)
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("bom_json_filename", help="bomdb exported json file of a BoM edition")
 parser.add_argument("cowdery_letter", help="txt file of the Oct 1829 letter")
@@ -103,12 +108,16 @@ for chapter, data in chapter_data.items():
     if len(data['text']) >= MIN_CHAR_LENGTH:
         for metric, score in data['readability'].items():
             readability_metrics[metric].append(score)
+
+        write_to_file(f"{chapter}.txt", data['text'])
     else:
-        print(f"CHAPTER < {MIN_CHAR_LENGTH}; dropping", chapter)
+        print(f"CHAPTER {len(data['text'])} < {MIN_CHAR_LENGTH}; dropping", chapter)
 
 letter_to_cowdery_readability = measure_readability(letter_to_cowdery_oct_1829)
 preface_to_bom_readability = measure_readability(preface_to_bom)
 book_of_mormon_less_bible_readability = measure_readability(all_book_of_mormon_text_without_bible)
+
+write_to_file("1992-bom-all-less-bible.txt", all_book_of_mormon_text_without_bible)
 
 # pyplot.rcdefaults()
 
@@ -138,7 +147,6 @@ for plot_num, (metric, values) in enumerate(readability_metrics.items(), 1):
     # distplot = sns.distplot(values, kde=True, rug=False)
     letter_line = plt.axvline(x=letter_to_cowdery_readability[metric], color='red', alpha=0.5, linestyle=":", linewidth=2)
     preface_line = plt.axvline(x=preface_to_bom_readability[metric], color='orange', alpha=0.6, linestyle=":", linewidth=2)
-    print("LETTER LINE", letter_line, type(letter_line))
     bom_line = plt.axvline(x=book_of_mormon_less_bible_readability[metric], color='black', alpha=0.5, linestyle="--", linewidth=3)
 
     axes = plt.gca()
